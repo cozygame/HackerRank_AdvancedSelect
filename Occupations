@@ -1,0 +1,19 @@
+-- Using Oracle
+
+SELECT D.name, P.name, S.name, A.name
+FROM (
+    SELECT name, ROW_NUMBER() OVER(PARTITION BY occupation ORDER BY name) id
+    FROM occupations
+    WHERE occupation = 'Doctor') D
+FULL OUTER JOIN (
+    SELECT name, ROW_NUMBER() OVER(PARTITION BY occupation ORDER BY name) id
+    FROM occupations
+    WHERE occupation = 'Professor') P ON D.id = P.id
+FULL OUTER JOIN (
+    SELECT name, ROW_NUMBER() OVER(PARTITION BY occupation ORDER BY name) id
+    FROM occupations
+    WHERE occupation = 'Singer') S ON S.id = P.id
+FULL OUTER JOIN (
+    SELECT name, ROW_NUMBER() OVER(PARTITION BY occupation ORDER BY name) id
+    FROM occupations
+    WHERE occupation = 'Actor') A ON A.id = S.id;

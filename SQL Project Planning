@@ -1,0 +1,11 @@
+SELECT t1.start_date, t2.end_date
+FROM (
+    SELECT ROW_NUMBER() OVER(ORDER BY start_date) rn1, start_date
+    FROM projects
+    WHERE start_date NOT IN (SELECT end_date FROM projects)) t1
+INNER JOIN (
+    SELECT ROW_NUMBER() OVER(ORDER BY end_date) rn2, end_date
+    FROM projects
+    WHERE end_date NOT IN (SELECT start_date FROM projects)) t2
+ON t1.rn1 = t2.rn2
+ORDER BY DATEDIFF(t2.end_date,t1.start_date), t1.start_date;

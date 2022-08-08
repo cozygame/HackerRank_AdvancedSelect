@@ -7,3 +7,15 @@ FROM (
     WHERE wp.is_evil = 0
     ORDER BY w.power DESC, age DESC, coins_needed)
 WHERE rn = 1;
+
+-- OR
+
+WITH data AS (
+    SELECT ROW_NUMBER() OVER(PARTITION BY wp.age, w.power ORDER BY w.power DESC, w.coins_needed) rn, wp.age, w.power, w.coins_needed, w.id
+    FROM wands w
+    JOIN wands_property wp ON w.code = wp.code
+    WHERE wp.is_evil = 0
+    ORDER BY w.power DESC, wp.age DESC, w.coins_needed)
+SELECT id, age, coins_needed, power
+FROM data
+WHERE rn = 1;
